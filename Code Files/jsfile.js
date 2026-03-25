@@ -126,7 +126,7 @@ function moveTotarget(plo, plt) {
   //create enemy
 function createObject(ox, oy) { 
    let obj = document.createElement("img");
-   obj.src = "Resources/shot.png";
+   obj.src = "../resources/shot.png";
    obj.style.position = "absolute";
    obj.className = "enemy";
    obj.style.left = ox + "vw";
@@ -140,7 +140,7 @@ function createObject(ox, oy) {
 // create a rocket
  function createRocket(ox, oy) {
    let obj = document.createElement("img");
-   obj.src = "Resources/rocket.png";
+   obj.src = "../resources/rocket.png";
    obj.style.position = "absolute";
    obj.className = "rocket";
    obj.style.left = ox + "vw";
