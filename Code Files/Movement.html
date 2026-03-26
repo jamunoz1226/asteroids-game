@@ -10,7 +10,17 @@
 
 
 <body>
-
+  <div id="instruction-popup" class="popup-overlay">
+    <div class="popup-box">
+        <h2>SYSTEM INITIALIZATION</h2>
+        <p>Welcome to the Planetarium Memory Match!</p>
+        <p>Your mission is to restore the ship's navigational computers by finding all the matching pairs of celestial objects. Test your memory and clear the board in as few attempts as possible.</p>
+        
+        <button class="play-btn" onclick="document.getElementById('instruction-popup').style.display = 'none'">
+            I UNDERSTAND - INITIATE
+        </button>
+    </div>
+</div>
  <!-- Score display -->
  <div id="score">Score: 0</div>
   
