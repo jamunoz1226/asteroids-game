@@ -8,6 +8,7 @@ let rocketSpeed = 0.8;
 // Score tracker - updates score when an enemy is removed
 let score = 0;
 
+// test?
 
 const player = document.getElementById("player");
    let speed = 0.12; // pixels per frame
