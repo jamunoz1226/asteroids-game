@@ -213,7 +213,7 @@ moveTotarget(rocket,target_Enemy);
 // loop generating enemy function
 function randenemy(){
 setTimeout(function() {
-moveToEarth(createObject(-20, Math.random()*150 - 50));
+moveToEarth(createObject(-20, Math.random()*120 - 40));
 randenemy();
 }, 1500);
 }
