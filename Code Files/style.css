@@ -4,14 +4,17 @@ body {
   overflow: hidden;
   height: 100vh;
   position: relative;
-  background-image: url('Resources/space.png');
+  background-image: url('../resources/space.png');
   background-size: 100% 100%;
   background-position: center;
+
+  /*Makng random update */
 }
+
 
 #player {
   position: absolute;
-  left: 0vw;
+  left: 0vw; 
   top: 0vh;
   width: 120px;
 }
