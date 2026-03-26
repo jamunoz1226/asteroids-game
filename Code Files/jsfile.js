@@ -155,7 +155,7 @@ function createObject(ox, oy) {
 // create a rocket
  function createRocket(ox, oy) {
    let obj = document.createElement("img");
-   obj.src = "../resources/rocket.png";
+   obj.src = "../resources/rocket.gif";
    obj.style.position = "absolute";
    obj.className = "rocket";
    obj.style.left = ox + "vw";
