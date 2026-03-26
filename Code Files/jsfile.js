@@ -63,12 +63,12 @@ function moveToEarth(pl) {
 
      let nx=px;
      let ny=py; //next position
+     
 
      function animate() {
      dx = fx - nx;
      dy = fy - ny;
      dist = Math.sqrt(dx * dx + dy * dy);
-
        if (dist>1 && moving == true) {
 
          if (nx< fx) nx +=(speed*dx/dist);
@@ -76,11 +76,29 @@ function moveToEarth(pl) {
         
          updatePosition(pl,nx,ny);
           pl.style.transform = "rotate("+nx*10+"deg)";
+        if(odist(pl,90,80)<5){pl.remove();
+            // explosion
+    let exp = document.createElement("img");
+  exp.src = "../Resources/explosion.gif";
+  exp.style.position = "absolute";
+  exp.style.left = "80vw";
+  exp.style.top = "60vh";
+  exp.style.width = "500px";
+  document.body.appendChild(exp);
+  setTimeout(() => {
+  exp.remove();
+}, 800);
+        }
+
+
+
          requestAnimationFrame(animate);
+         
        }     
      }
-    
+
      requestAnimationFrame(animate);
+     
 }
 
 function moveTotarget(plo, plt) {
