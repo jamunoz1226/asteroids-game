@@ -1,3 +1,4 @@
+//test
 // rocket launch position
 let launchX = 90;
 let launchY = 80;
