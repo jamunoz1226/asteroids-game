@@ -11,9 +11,10 @@ body {
   /*Makng random update */
 }
 
+
 #player {
   position: absolute;
-  left: 0vw;
+  left: 0vw; 
   top: 0vh;
   width: 120px;
 }

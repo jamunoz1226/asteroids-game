@@ -83,8 +83,6 @@ function moveToEarth(pl) {
      requestAnimationFrame(animate);
 }
 
-
-
 function moveTotarget(plo, plt) {
   function animate() {
     let px = parseFloat(plo.style.left) || 0;
@@ -102,28 +100,44 @@ function moveTotarget(plo, plt) {
 
       updatePosition(plo, px, py);
       let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-      plo.style.transform = "rotate(" + (angle) + "deg)";
+      plo.style.transform = "rotate(" + (angle+35) + "deg)";
 
       requestAnimationFrame(animate);
     } else {
       updatePosition(plo, fx, fy);
     }
 
-    // Check for collision with the target enemy
- if (objdist(plo, plt) < 5) {
-    plo.remove();
+  // Check for collision with the target enemy
+  if (objdist(plo,plt)<0.1){
+  let exp = document.createElement("img");
+  exp.src = "../Resources/explosion.gif";
+  exp.style.position = "absolute";
+  exp.style.left = plt.style.left;
+  exp.style.top = plt.style.top;
+  exp.style.width = "150px";
+
+  // only first rocket gets the score
+  if (plt && !plt.dataset.hit) {
+    plt.dataset.hit = "true";   // Killed
+    score++;
     plt.remove();
-
-    score += 1;
     scoreDisplay.innerHTML = "Score: " + score;
+  }  
+  plo.remove();
 
+  // explosion
+  document.body.appendChild(exp);
+  scoreDisplay.innerHTML = "Score: " + score;
+  setTimeout(() => {
+  exp.remove();
+}, 800);
     return; // stops the animation loop
   }
 }
   animate();
 }
 
-  //create enemy
+//create enemy
 function createObject(ox, oy) { 
    let obj = document.createElement("img");
    obj.src = "../resources/shot.png";
@@ -137,6 +151,7 @@ function createObject(ox, oy) {
    document.body.appendChild(obj);
    return obj;
  }
+
 // create a rocket
  function createRocket(ox, oy) {
    let obj = document.createElement("img");
@@ -145,7 +160,7 @@ function createObject(ox, oy) {
    obj.className = "rocket";
    obj.style.left = ox + "vw";
    obj.style.top = oy + "vh";
-   obj.style.width = "200px";
+   obj.style.width = "100px";
    
 
    document.body.appendChild(obj);
@@ -160,7 +175,7 @@ function createObject(ox, oy) {
    });
 
 
-  // //  // --- ROCKET AND LASER CODE ---
+// --- ROCKET---
   // let gun = document.createElement("img");
   // gun.src = "Resources/laser_gun.png";
   // gun.style.position = "absolute";
@@ -195,10 +210,17 @@ moveTotarget(rocket,target_Enemy);
 )
 
 
+// loop generating enemy function
+function randenemy(){
+setTimeout(function() {
+moveToEarth(createObject(-20, Math.random()*150 - 50));
+randenemy();
+}, 1500);
+}
+randenemy();
 
 
-
-   // When the user clicks, create a laser effect from the rocket to the click position
+// When the user clicks, create a laser effect from the rocket to the click position
 //    document.addEventListener("click", function(e) {
 //    let laser = document.createElement("div");
    
