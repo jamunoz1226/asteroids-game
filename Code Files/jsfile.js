@@ -82,7 +82,8 @@ function moveToEarth(pl) {
     
      requestAnimationFrame(animate);
 }
-
+ 
+//test?
 
 
 function moveTotarget(plo, plt) {
