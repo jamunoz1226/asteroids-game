@@ -8,6 +8,61 @@ let rocketSpeed = 0.8;
 // Score tracker - updates score when an enemy is removed
 let score = 0;
 
+// --- TIMER ---
+let timeLeft = 30;
+let timerDisplay = document.createElement("div");
+timerDisplay.style.position = "absolute";
+timerDisplay.style.top = "20px";
+timerDisplay.style.right = "20px";
+timerDisplay.style.color = "white";
+timerDisplay.style.fontSize = "30px";
+timerDisplay.style.zIndex = "10";
+timerDisplay.innerHTML = "Time: 30";
+document.body.appendChild(timerDisplay);
+
+let timerInterval = setInterval(function() {
+  timeLeft--;
+  timerDisplay.innerHTML = "Time: " + timeLeft;
+  if (timeLeft <= 0) {
+    clearInterval(timerInterval);
+    timerDisplay.innerHTML = "Time: 0";
+    timerDisplay.style.color = "red";
+    document.querySelectorAll(".enemy").forEach(e => e.remove());
+    document.querySelectorAll(".rocket").forEach(r => r.remove());
+    moving = false;
+
+    let gameOver = document.createElement("div");
+    gameOver.innerHTML = "GAME OVER<br>Final Score: " + score;
+    gameOver.style.position = "absolute";
+    gameOver.style.top = "40vh";
+    gameOver.style.left = "50%";
+    gameOver.style.transform = "translateX(-50%)";
+    gameOver.style.color = "#66fcf1";
+    gameOver.style.fontSize = "50px";
+    gameOver.style.textAlign = "center";
+    gameOver.style.zIndex = "9999";
+    document.body.appendChild(gameOver);
+
+    let tryAgain = document.createElement("button");
+    tryAgain.innerHTML = "TRY AGAIN";
+    tryAgain.style.position = "absolute";
+    tryAgain.style.top = "60vh";
+    tryAgain.style.left = "50%";
+    tryAgain.style.transform = "translateX(-50%)";
+    tryAgain.style.padding = "15px 30px";
+    tryAgain.style.fontSize = "1.2rem";
+    tryAgain.style.fontWeight = "bold";
+    tryAgain.style.backgroundColor = "#66fcf1";
+    tryAgain.style.color = "#0b0c10";
+    tryAgain.style.border = "none";
+    tryAgain.style.borderRadius = "8px";
+    tryAgain.style.cursor = "pointer";
+    tryAgain.style.zIndex = "9999";
+    tryAgain.onclick = () => location.reload();
+    document.body.appendChild(tryAgain);
+  }
+}, 1000);
+
 
 const player = document.getElementById("player");
    let speed = 0.12; // pixels per frame
@@ -212,10 +267,12 @@ moveTotarget(rocket,target_Enemy);
 
 // loop generating enemy function
 function randenemy(){
-setTimeout(function() {
-moveToEarth(createObject(-20, Math.random()*120 - 40));
-randenemy();
-}, 1500);
+  setTimeout(function() {
+    if (timeleft > 0){
+    moveToEarth(createObject(-20, Math.random()*120 - 40));
+    randenemy();
+    }
+  }, 1500);
 }
 randenemy();
 
