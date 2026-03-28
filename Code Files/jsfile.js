@@ -63,12 +63,6 @@ if (near<10)return nEnemy;
 // Score display element
 let scoreDisplay = document.getElementById("score");
 
-scoreDisplay.style.position = "absolute";
-scoreDisplay.style.top = "20px";
-scoreDisplay.style.left = "20px";
-scoreDisplay.style.color = "White";
-scoreDisplay.style.fontSize = "30px";
-scoreDisplay.style.zIndex = "10";
 
 
 function moveToEarth(pl) {
@@ -102,9 +96,18 @@ function moveToEarth(pl) {
           updatePosition(pl,nx,ny);
           pl.style.transform = "rotate("+nx*10+"deg)";
           
-          // --- GAME OVER & EXPLOSION LOGIC ---
-          if (!hasExplodedAtEarth && odist(pl, 90, 80) < 5) {
+            // --- GAME OVER & FRIENDLY LOGIC ---
+            if (!hasExplodedAtEarth && odist(pl, 90, 80) < 5) {
               hasExplodedAtEarth = true;
+              
+              // Check if it's the friendly ship!
+              if (pl.classList.contains("friend")) {
+                  pl.remove();
+                  triggerFriendAbility(); // Launch the rockets!
+                  return; // Stop here so we don't trigger Game Over
+              }
+
+              // If it wasn't a friend, it's an enemy. Game Over!
               pl.remove(); 
               
               let exp = document.createElement("img");
@@ -112,7 +115,7 @@ function moveToEarth(pl) {
               exp.style.position = "absolute";
               exp.style.left = "80vw";
               exp.style.top = "60vh";
-              exp.style.width = "500px";
+              exp.style.width = "50vh";
               document.body.appendChild(exp);
               setTimeout(() => {
                   exp.remove();
@@ -121,7 +124,7 @@ function moveToEarth(pl) {
               triggerGameOver();
               
               return; 
-          }
+            }
 
           requestAnimationFrame(animate);
       }     
@@ -161,7 +164,7 @@ function moveTotarget(plo, plt) {
     exp.style.position = "absolute";
     exp.style.left = plt.style.left;
     exp.style.top = plt.style.top;
-    exp.style.width = "150px";
+    exp.style.width = "15vh";
 
     if (plt && !plt.dataset.dead) {
         // Check if it's a boss with health
@@ -171,7 +174,7 @@ function moveTotarget(plo, plt) {
             
             if (hp <= 0) {
                 plt.dataset.dead = "true";
-                score += 5; // Bosses give 5 points!
+                score += 500; // Bosses give 5 points!
                 plt.remove();
             } else {
                 // Boss took damage but survived! Flash it red briefly
@@ -181,10 +184,13 @@ function moveTotarget(plo, plt) {
         } else {
             // It's a regular asteroid (1 hit)
             plt.dataset.dead = "true";   
-            score++;
+            score += 100 ;
             plt.remove();
         }
         scoreDisplay.innerHTML = "Score: " + score;
+
+        scoreDisplay.classList.add("score-pop");
+          setTimeout(() => scoreDisplay.classList.remove("score-pop"), 150);
     }  
     
     plo.remove(); // The rocket always explodes
@@ -328,7 +334,52 @@ function randBoss(){
 }
 
 
-// New function to start the game
+// Create a Friendly Ship
+function createFriend(ox, oy) { 
+  let obj = document.createElement("img");
+  obj.src = "../Resources/friends.png"; // Using the cartoon missile as the friend!
+  obj.style.position = "absolute";
+  obj.className = "friend"; // Important: It's NOT an "enemy"
+  
+  // Tint it bright green so the player knows it's friendly!
+  obj.style.filter = "hue-rotate(100deg) brightness(150%) drop-shadow(0 0 10px lime)"; 
+  
+  obj.style.left = ox + "vw";
+  obj.style.top = oy + "vh";
+  obj.style.width = "12vh"; 
+
+  document.body.appendChild(obj);
+  return obj;
+}
+
+// The massive retaliation ability
+function triggerFriendAbility() {
+   // Find every single enemy currently on the screen
+   let activeEnemies = document.querySelectorAll(".enemy");
+   
+   // For every enemy found, fire an automatic rocket from Earth at it!
+   activeEnemies.forEach(enemy => {
+       let autoRocket = createRocket(launchX, launchY);
+       moveTotarget(autoRocket, enemy);
+   });
+}
+
+// Loop for spawning friendly ships
+function randFriend(){
+ if (isGameOver) return; 
+
+ setTimeout(function() {
+   if (isGameOver) return; 
+   
+   // Send the friendly ship towards Earth
+   moveToEarth(createFriend(-20, Math.random() * 80 + 10));
+   
+   // Spawns another friend every 12 seconds
+   randFriend(); 
+ }, 12000);
+}
+
+
 // New function to start the game
 function startGame() {
   // Hide the initial instruction popup
@@ -344,6 +395,15 @@ function startGame() {
           randBoss();
       }
   }, 15000);
+
+  // INCOMING FRIENDLY BACKUP! (Starts after 20 seconds)
+  setTimeout(() => {
+    if (!isGameOver) {
+        console.log("Friendly ship inbound!");
+        randFriend();
+    }
+}, 20000);
+
 }
 
 
