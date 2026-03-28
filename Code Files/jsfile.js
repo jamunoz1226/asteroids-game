@@ -92,6 +92,8 @@ function moveToEarth(pl) {
   setTimeout(() => {
   exp.remove();
 }, 800);
+
+              triggerGameOver(); // call to end the game when its over    
             return;
         }
 
