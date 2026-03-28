@@ -74,10 +74,27 @@ body {
 }
 
 #score {
-  color: white;
-  font-size: 24px;
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 20px;
+  left: 20px;
   z-index: 10;
+  background-color: rgba(31, 40, 51, 0.85); /* Dark slightly transparent box */
+  border: 2px solid #66fcf1; /* Neon cyan border */
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: #66fcf1; /* Neon cyan text */
+  font-family: 'Courier New', Courier, monospace; /* Terminal/Sci-fi font */
+  font-size: 26px;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(102, 252, 241, 0.3); /* Outer glow */
+  text-shadow: 0 0 8px rgba(102, 252, 241, 0.6); /* Text glow */
+  transition: all 0.1s ease-out; /* Smooth animation for when it pops */
+  user-select: none; /* Prevents accidentally highlighting the text */
+}
+
+/* This is the class we will quickly add/remove when you score a point */
+.score-pop {
+  transform: scale(1.15); /* Makes it slightly bigger */
+  box-shadow: 0 0 30px rgba(102, 252, 241, 0.8) !important; /* Brighter glow */
+  background-color: rgba(102, 252, 241, 0.2) !important; /* Flashes the background */
 }

@@ -62,12 +62,6 @@ if (near<10)return nEnemy;
 // Score display element
 let scoreDisplay = document.getElementById("score");
 
-scoreDisplay.style.position = "absolute";
-scoreDisplay.style.top = "20px";
-scoreDisplay.style.left = "20px";
-scoreDisplay.style.color = "White";
-scoreDisplay.style.fontSize = "30px";
-scoreDisplay.style.zIndex = "10";
 
 
 function moveToEarth(pl) {
@@ -86,6 +80,9 @@ function moveToEarth(pl) {
       // --- KILLS THE BACKGROUND LOOP IF GAME IS OVER ---
       if (isGameOver) return; 
 
+      // If the asteroid was destroyed by a rocket and removed from the game, STOP the math!
+      if (!document.body.contains(pl)) return;
+
       dx = fx - nx;
       dy = fy - ny;
       dist = Math.sqrt(dx * dx + dy * dy);
@@ -98,9 +95,18 @@ function moveToEarth(pl) {
           updatePosition(pl,nx,ny);
           pl.style.transform = "rotate("+nx*10+"deg)";
           
-          // --- GAME OVER & EXPLOSION LOGIC ---
-          if (!hasExplodedAtEarth && odist(pl, 90, 80) < 5) {
+            // --- GAME OVER & FRIENDLY LOGIC ---
+            if (!hasExplodedAtEarth && odist(pl, 90, 80) < 5) {
               hasExplodedAtEarth = true;
+              
+              // Check if it's the friendly ship!
+              if (pl.classList.contains("friend")) {
+                  pl.remove();
+                  triggerFriendAbility(); // Launch the rockets!
+                  return; // Stop here so we don't trigger Game Over
+              }
+
+              // If it wasn't a friend, it's an enemy. Game Over!
               pl.remove(); 
               
               let exp = document.createElement("img");
@@ -108,7 +114,7 @@ function moveToEarth(pl) {
               exp.style.position = "absolute";
               exp.style.left = "80vw";
               exp.style.top = "60vh";
-              exp.style.width = "500px";
+              exp.style.width = "50vh";
               document.body.appendChild(exp);
               setTimeout(() => {
                   exp.remove();
@@ -117,7 +123,7 @@ function moveToEarth(pl) {
               triggerGameOver();
               
               return; 
-          }
+            }
 
           requestAnimationFrame(animate);
       }     
@@ -152,30 +158,50 @@ function moveTotarget(plo, plt) {
 
   // Check for collision with the target enemy
   if (objdist(plo,plt)<0.1){
-  let exp = document.createElement("img");
-  exp.src = "../Resources/explosion.gif";
-  exp.style.position = "absolute";
-  exp.style.left = plt.style.left;
-  exp.style.top = plt.style.top;
-  exp.style.width = "150px";
+    let exp = document.createElement("img");
+    exp.src = "../Resources/explosion.gif";
+    exp.style.position = "absolute";
+    exp.style.left = plt.style.left;
+    exp.style.top = plt.style.top;
+    exp.style.width = "15vh";
 
-  // only first rocket gets the score
-  if (plt && !plt.dataset.hit) {
-    plt.dataset.hit = "true";   // Killed
-    score++;
-    plt.remove();
-    scoreDisplay.innerHTML = "Score: " + score;
-  }  
-  plo.remove();
+    if (plt && !plt.dataset.dead) {
+        // Check if it's a boss with health
+        if (plt.dataset.health) {
+            let hp = parseInt(plt.dataset.health) - 1;
+            plt.dataset.health = hp; // Update the health
+            
+            if (hp <= 0) {
+                plt.dataset.dead = "true";
+                score += 500; // Bosses give 5 points!
+                plt.remove();
+            } else {
+                // Boss took damage but survived! Flash it red briefly
+                plt.style.filter = "brightness(50%) sepia(100) saturate(100) hue-rotate(330deg)";
+                setTimeout(() => { if (plt) plt.style.filter = "none"; }, 150);
+            }
+        } else {
+            // It's a regular asteroid (1 hit)
+            plt.dataset.dead = "true";   
+            score += 100 ;
+            plt.remove();
+        }
+        scoreDisplay.innerHTML = "Score: " + score;
 
-  // explosion
-  document.body.appendChild(exp);
-  scoreDisplay.innerHTML = "Score: " + score;
-  setTimeout(() => {
-  exp.remove();
-}, 800);
+        scoreDisplay.classList.add("score-pop");
+          setTimeout(() => scoreDisplay.classList.remove("score-pop"), 150);
+    }  
+    
+    plo.remove(); // The rocket always explodes
+
+    // Add explosion visual
+    document.body.appendChild(exp);
+    setTimeout(() => {
+        exp.remove();
+    }, 800);
+    
     return; // stops the animation loop
-  }
+}
 }
   animate();
 }
@@ -183,13 +209,15 @@ function moveTotarget(plo, plt) {
 //create enemy
 function createObject(ox, oy) { 
    let obj = document.createElement("img");
-   obj.src = "../resources/shot.png";
+   obj.src = "../resources/base.png";
+   //obj.src = "../Resources/boss.png";
+  //obj.src = "../Resources/shot.png",
    obj.style.position = "absolute";
    obj.className = "enemy";
    obj.style.left = ox + "vw";
    obj.style.top = oy + "vh";
-   obj.style.width = "100px";
-   obj.style.height = "100px";
+   obj.style.width = "10vh";
+   obj.style.height = "10vh";
 
    document.body.appendChild(obj);
    return obj;
@@ -203,7 +231,7 @@ function createObject(ox, oy) {
    obj.className = "rocket";
    obj.style.left = ox + "vw";
    obj.style.top = oy + "vh";
-   obj.style.width = "100px";
+   obj.style.width = "10vh";
    
 
    document.body.appendChild(obj);
@@ -251,7 +279,7 @@ if (targetEnemy) {
 });
 
 
-// loop generating enemy function
+// Loop for generating normal enemies
 function randenemy(){
 
   if (isGameOver) return; // stops the loop
@@ -260,17 +288,122 @@ function randenemy(){
     // Check ONE MORE TIME before actually spawning the asteroid
     if (isGameOver) return; 
 
-    moveToEarth(createObject(-20, Math.random()*120 - 40));
+    // Spawns at X: -20 (left wall), Y: between 10 and 90 (visible screen height)
+    moveToEarth(createObject(-20, Math.random() * 80 + 10));
     randenemy();
   }, 1500);
 }
+
+// Array of your generated boss asteroid images
+const bossImages = [
+  "../Resources/boss.png",
+  "../Resources/shot.png",
+];
+
+// Create a tough asteroid (Boss)
+function createBoss(ox, oy) { 
+ let obj = document.createElement("img");
+ // Pick a random image from the array
+ obj.src = bossImages[Math.floor(Math.random() * bossImages.length)];
+ obj.style.position = "absolute";
+ obj.className = "enemy"; // Keep class "enemy" so rockets can track it!
+ obj.dataset.health = "3"; // IT TAKES 3 HITS!
+ 
+ obj.style.left = ox + "vw";
+ obj.style.top = oy + "vh";
+ obj.style.width = "10vh"; // Make them bigger than normal asteroids
+ obj.style.height = "10vh";
+
+ document.body.appendChild(obj);
+ return obj;
+}
+
+// Loop for generating bosses
+function randBoss(){
+  if (isGameOver) return; 
+
+  setTimeout(function() {
+    if (isGameOver) return; 
+    
+    // Spawns boss at X: -20 (left wall), Y: between 10 and 90
+    moveToEarth(createBoss(-20, Math.random() * 80 + 10));
+    
+    // Bosses spawn a bit slower, every 4 seconds
+    randBoss(); 
+  }, 4000);
+}
+
+
+// Create a Friendly Ship
+function createFriend(ox, oy) { 
+  let obj = document.createElement("img");
+  obj.src = "../Resources/friends.png"; // Using the cartoon missile as the friend!
+  obj.style.position = "absolute";
+  obj.className = "friend"; // Important: It's NOT an "enemy"
+  
+  // Tint it bright green so the player knows it's friendly!
+  obj.style.filter = "hue-rotate(100deg) brightness(150%) drop-shadow(0 0 10px lime)"; 
+  
+  obj.style.left = ox + "vw";
+  obj.style.top = oy + "vh";
+  obj.style.width = "12vh"; 
+
+  document.body.appendChild(obj);
+  return obj;
+}
+
+// The massive retaliation ability
+function triggerFriendAbility() {
+   // Find every single enemy currently on the screen
+   let activeEnemies = document.querySelectorAll(".enemy");
+   
+   // For every enemy found, fire an automatic rocket from Earth at it!
+   activeEnemies.forEach(enemy => {
+       let autoRocket = createRocket(launchX, launchY);
+       moveTotarget(autoRocket, enemy);
+   });
+}
+
+// Loop for spawning friendly ships
+function randFriend(){
+ if (isGameOver) return; 
+
+ setTimeout(function() {
+   if (isGameOver) return; 
+   
+   // Send the friendly ship towards Earth
+   moveToEarth(createFriend(-20, Math.random() * 80 + 10));
+   
+   // Spawns another friend every 12 seconds
+   randFriend(); 
+ }, 12000);
+}
+
+
 // New function to start the game
 function startGame() {
-    // Hide the initial instruction popup
-    document.getElementById('instruction-popup').style.display = 'none';
-    
-    // Start spawning the asteroids
-    randenemy();
+  // Hide the initial instruction popup
+  document.getElementById('instruction-popup').style.display = 'none';
+  
+  // Start spawning the normal asteroids immediately
+  randenemy();
+  
+  // WARNING: INCOMING BOSSES! (Starts after 15 seconds)
+  setTimeout(() => {
+      if (!isGameOver) {
+          console.log("Boss asteroids incoming!");
+          randBoss();
+      }
+  }, 15000);
+
+  // INCOMING FRIENDLY BACKUP! (Starts after 20 seconds)
+  setTimeout(() => {
+    if (!isGameOver) {
+        console.log("Friendly ship inbound!");
+        randFriend();
+    }
+}, 20000);
+
 }
 
 
