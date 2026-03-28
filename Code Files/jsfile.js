@@ -87,6 +87,9 @@ function moveToEarth(pl) {
       // --- KILLS THE BACKGROUND LOOP IF GAME IS OVER ---
       if (isGameOver) return; 
 
+      // If the asteroid was destroyed by a rocket and removed from the game, STOP the math!
+      if (!document.body.contains(pl)) return;
+
       dx = fx - nx;
       dy = fy - ny;
       dist = Math.sqrt(dx * dx + dy * dy);
@@ -153,30 +156,47 @@ function moveTotarget(plo, plt) {
 
   // Check for collision with the target enemy
   if (objdist(plo,plt)<0.1){
-  let exp = document.createElement("img");
-  exp.src = "../Resources/explosion.gif";
-  exp.style.position = "absolute";
-  exp.style.left = plt.style.left;
-  exp.style.top = plt.style.top;
-  exp.style.width = "150px";
+    let exp = document.createElement("img");
+    exp.src = "../Resources/explosion.gif";
+    exp.style.position = "absolute";
+    exp.style.left = plt.style.left;
+    exp.style.top = plt.style.top;
+    exp.style.width = "150px";
 
-  // only first rocket gets the score
-  if (plt && !plt.dataset.hit) {
-    plt.dataset.hit = "true";   // Killed
-    score++;
-    plt.remove();
-    scoreDisplay.innerHTML = "Score: " + score;
-  }  
-  plo.remove();
+    if (plt && !plt.dataset.dead) {
+        // Check if it's a boss with health
+        if (plt.dataset.health) {
+            let hp = parseInt(plt.dataset.health) - 1;
+            plt.dataset.health = hp; // Update the health
+            
+            if (hp <= 0) {
+                plt.dataset.dead = "true";
+                score += 5; // Bosses give 5 points!
+                plt.remove();
+            } else {
+                // Boss took damage but survived! Flash it red briefly
+                plt.style.filter = "brightness(50%) sepia(100) saturate(100) hue-rotate(330deg)";
+                setTimeout(() => { if (plt) plt.style.filter = "none"; }, 150);
+            }
+        } else {
+            // It's a regular asteroid (1 hit)
+            plt.dataset.dead = "true";   
+            score++;
+            plt.remove();
+        }
+        scoreDisplay.innerHTML = "Score: " + score;
+    }  
+    
+    plo.remove(); // The rocket always explodes
 
-  // explosion
-  document.body.appendChild(exp);
-  scoreDisplay.innerHTML = "Score: " + score;
-  setTimeout(() => {
-  exp.remove();
-}, 800);
+    // Add explosion visual
+    document.body.appendChild(exp);
+    setTimeout(() => {
+        exp.remove();
+    }, 800);
+    
     return; // stops the animation loop
-  }
+}
 }
   animate();
 }
@@ -184,7 +204,7 @@ function moveTotarget(plo, plt) {
 //create enemy
 function createObject(ox, oy) { 
    let obj = document.createElement("img");
-   obj.src = "../resources/shot.png";
+   obj.src = "../resources/base.png";
    obj.style.position = "absolute";
    obj.className = "enemy";
    obj.style.left = ox + "vw";
@@ -252,7 +272,7 @@ if (targetEnemy) {
 });
 
 
-// loop generating enemy function
+// Loop for generating normal enemies
 function randenemy(){
   if (isGameOver) return; // stops the loop
 
@@ -260,17 +280,68 @@ function randenemy(){
     // Check ONE MORE TIME before actually spawning the asteroid
     if (isGameOver) return; 
 
-    moveToEarth(createObject(-20, Math.random()*120 - 40));
+    // Spawns at X: -20 (left wall), Y: between 10 and 90 (visible screen height)
+    moveToEarth(createObject(-20, Math.random() * 80 + 10));
     randenemy();
   }, 1500);
 }
+
+// Array of your generated boss asteroid images
+const bossImages = [
+  "../Resources/boss.png",
+  "../Resources/shot.png",
+];
+
+// Create a tough asteroid (Boss)
+function createBoss(ox, oy) { 
+ let obj = document.createElement("img");
+ // Pick a random image from the array
+ obj.src = bossImages[Math.floor(Math.random() * bossImages.length)];
+ obj.style.position = "absolute";
+ obj.className = "enemy"; // Keep class "enemy" so rockets can track it!
+ obj.dataset.health = "3"; // IT TAKES 3 HITS!
+ 
+ obj.style.left = ox + "vw";
+ obj.style.top = oy + "vh";
+ obj.style.width = "180px"; // Make them bigger than normal asteroids
+ obj.style.height = "180px";
+
+ document.body.appendChild(obj);
+ return obj;
+}
+
+// Loop for generating bosses
+function randBoss(){
+  if (isGameOver) return; 
+
+  setTimeout(function() {
+    if (isGameOver) return; 
+    
+    // Spawns boss at X: -20 (left wall), Y: between 10 and 90
+    moveToEarth(createBoss(-20, Math.random() * 80 + 10));
+    
+    // Bosses spawn a bit slower, every 4 seconds
+    randBoss(); 
+  }, 4000);
+}
+
+
+// New function to start the game
 // New function to start the game
 function startGame() {
-    // Hide the initial instruction popup
-    document.getElementById('instruction-popup').style.display = 'none';
-    
-    // Start spawning the asteroids
-    randenemy();
+  // Hide the initial instruction popup
+  document.getElementById('instruction-popup').style.display = 'none';
+  
+  // Start spawning the normal asteroids immediately
+  randenemy();
+  
+  // WARNING: INCOMING BOSSES! (Starts after 15 seconds)
+  setTimeout(() => {
+      if (!isGameOver) {
+          console.log("Boss asteroids incoming!");
+          randBoss();
+      }
+  }, 15000);
 }
 
 
