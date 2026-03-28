@@ -72,59 +72,59 @@ scoreDisplay.style.zIndex = "10";
 
 
 function moveToEarth(pl) {
-     moving = true;
-     let hasExplodedAtEarth = false;
+  let hasExplodedAtEarth = false; 
 
-     let px = parseFloat(pl.style.left) || 0; //starting x
-     let py = parseFloat(pl.style.top) || 0;  //starting y
-    
-     fx = 90; //final x (earth)
-     fy = 80; //final y (earth)
+  let px = parseFloat(pl.style.left) || 0; //starting x
+  let py = parseFloat(pl.style.top) || 0;  //starting y
+ 
+  let fx = 90; //final x (earth)
+  let fy = 80; //final y (earth)
 
-     let nx=px;
-     let ny=py; //next position
-     
+  let nx=px;
+  let ny=py; //next position
 
-     function animate() {
-     dx = fx - nx;
-     dy = fy - ny;
-     dist = Math.sqrt(dx * dx + dy * dy);
-       if (dist>1 && moving == true) {
+  function animate() {
+      // --- KILLS THE BACKGROUND LOOP IF GAME IS OVER ---
+      if (isGameOver) return; 
 
-         if (nx< fx) nx +=(speed*dx/dist);
-         if (ny< fy) ny +=(speed*dy/dist);
-        
-         updatePosition(pl,nx,ny);
-          pl.style.transform = "rotate("+nx*10+"deg)";
-        if (!hasExplodedAtEarth && odist(pl,90,80)<5){
-            hasExplodedAtEarth = true;
-            moving = false;
-            pl.remove();
-            // explosion
-    let exp = document.createElement("img");
-  exp.src = "../Resources/explosion.gif";
-  exp.style.position = "absolute";
-  exp.style.left = "80vw";
-  exp.style.top = "60vh";
-  exp.style.width = "500px";
-  document.body.appendChild(exp);
-  setTimeout(() => {
-  exp.remove();
-}, 800);
+      dx = fx - nx;
+      dy = fy - ny;
+      dist = Math.sqrt(dx * dx + dy * dy);
 
-              triggerGameOver(); // call to end the game when its over    
-            return;
-        }
+      if (dist>1) { // Removed 'moving' variable since it's global and buggy
 
-
-
-         requestAnimationFrame(animate);
+          if (nx< fx) nx +=(speed*dx/dist);
+          if (ny< fy) ny +=(speed*dy/dist);
          
-       }     
-     }
+          updatePosition(pl,nx,ny);
+          pl.style.transform = "rotate("+nx*10+"deg)";
+          
+          // --- GAME OVER & EXPLOSION LOGIC ---
+          if (!hasExplodedAtEarth && odist(pl, 90, 80) < 5) {
+              hasExplodedAtEarth = true;
+              pl.remove(); 
+              
+              let exp = document.createElement("img");
+              exp.src = "../Resources/explosion.gif";
+              exp.style.position = "absolute";
+              exp.style.left = "80vw";
+              exp.style.top = "60vh";
+              exp.style.width = "500px";
+              document.body.appendChild(exp);
+              setTimeout(() => {
+                  exp.remove();
+              }, 800);
+              
+              triggerGameOver();
+              
+              return; 
+          }
 
-     requestAnimationFrame(animate);
-     
+          requestAnimationFrame(animate);
+      }     
+  }
+ 
+  requestAnimationFrame(animate);
 }
 
 function moveTotarget(plo, plt) {
@@ -254,13 +254,15 @@ if (targetEnemy) {
 
 // loop generating enemy function
 function randenemy(){
+  if (isGameOver) return; // stops the loop
 
-  if (isGameOver) return;
+  setTimeout(function() {
+    // Check ONE MORE TIME before actually spawning the asteroid
+    if (isGameOver) return; 
 
-setTimeout(function() {
-moveToEarth(createObject(-20, Math.random()*120 - 40));
-randenemy();
-}, 1500);
+    moveToEarth(createObject(-20, Math.random()*120 - 40));
+    randenemy();
+  }, 1500);
 }
 // New function to start the game
 function startGame() {
