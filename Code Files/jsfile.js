@@ -11,6 +11,11 @@ let score = 0;
 // Track game state
 let isGameOver = false;
 
+// How fast normal asteroids spawn (starts at 1.5 seconds)
+let enemySpawnRate = 1500;
+
+let BossSpawnRate = 1900;
+
 // Function to handle the end of the game
 function triggerGameOver() {
     if (isGameOver) return; // Prevent it from triggering multiple times
@@ -291,7 +296,7 @@ function randenemy(){
     // Spawns at X: -20 (left wall), Y: between 10 and 90 (visible screen height)
     moveToEarth(createObject(-20, Math.random() * 80 + 10));
     randenemy();
-  }, 1500);
+  }, enemySpawnRate);
 }
 
 // Array of your generated boss asteroid images
@@ -330,7 +335,7 @@ function randBoss(){
     
     // Bosses spawn a bit slower, every 4 seconds
     randBoss(); 
-  }, 4000);
+  }, BossSpawnRate);
 }
 
 
@@ -404,6 +409,16 @@ function startGame() {
     }
 }, 20000);
 
+setTimeout(() => {
+  if (!isGameOver) {
+    console.log ("WARNING: ASTEROID STORM DETECTED!");
+    // Drop the spawns delay from 15000ms down to 600ms! (More than Twice as Fast)
+
+      enemySpawnRate = 600;
+      BossSpawnRate = 600;
+  }
+
+}, 30000); 
 }
 
 
