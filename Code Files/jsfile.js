@@ -9,6 +9,25 @@ let rocketSpeed = 0.8;
 let score = 0;
 
 
+// Track game state
+let isGameOver = false;
+
+// Function to handle the end of the game
+function triggerGameOver() {
+    if (isGameOver) return; // Prevent it from triggering multiple times
+    isGameOver = true;
+
+    // Show the game over popup
+    document.getElementById("game-over-popup").style.display = "flex";
+    
+    // Display the final score
+    document.getElementById("final-score").innerText = "Final Score: " + score;
+
+    // Remove all remaining enemies and rockets from the screen
+    document.querySelectorAll('.enemy').forEach(e => e.remove());
+    document.querySelectorAll('.rocket').forEach(e => e.remove());
+}
+
 const player = document.getElementById("player");
    let speed = 0.12; // pixels per frame
 
@@ -235,12 +254,22 @@ if (targetEnemy) {
 
 // loop generating enemy function
 function randenemy(){
+
+  if (isGameOver) return;
+
 setTimeout(function() {
 moveToEarth(createObject(-20, Math.random()*120 - 40));
 randenemy();
 }, 1500);
 }
-randenemy();
+// New function to start the game
+function startGame() {
+    // Hide the initial instruction popup
+    document.getElementById('instruction-popup').style.display = 'none';
+    
+    // Start spawning the asteroids
+    randenemy();
+}
 
 
 // When the user clicks, create a laser effect from the rocket to the click position
