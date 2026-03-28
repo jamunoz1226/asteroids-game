@@ -8,6 +8,24 @@ let rocketSpeed = 0.8;
 // Score tracker - updates score when an enemy is removed
 let score = 0;
 
+// Track game state
+let isGameOver = false;
+
+// Function to handle the end of the game
+function triggerGameOver() {
+    if (isGameOver) return; // Prevent it from triggering multiple times
+    isGameOver = true;
+
+    // Show the game over popup
+    document.getElementById("game-over-popup").style.display = "flex";
+    
+    // Display the final score
+    document.getElementById("final-score").innerText = "Final Score: " + score;
+
+    // Remove all remaining enemies and rockets from the screen
+    document.querySelectorAll('.enemy').forEach(e => e.remove());
+    document.querySelectorAll('.rocket').forEach(e => e.remove());
+}
 
 const player = document.getElementById("player");
    let speed = 0.12; // pixels per frame
@@ -212,6 +230,9 @@ moveTotarget(rocket,target_Enemy);
 
 // loop generating enemy function
 function randenemy(){
+
+  if (isGameOver) return; // stops the game if its over 
+
 setTimeout(function() {
 moveToEarth(createObject(-20, Math.random()*120 - 40));
 randenemy();
