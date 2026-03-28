@@ -205,12 +205,14 @@ function moveTotarget(plo, plt) {
 function createObject(ox, oy) { 
    let obj = document.createElement("img");
    obj.src = "../resources/base.png";
+   //obj.src = "../Resources/boss.png";
+  //obj.src = "../Resources/shot.png",
    obj.style.position = "absolute";
    obj.className = "enemy";
    obj.style.left = ox + "vw";
    obj.style.top = oy + "vh";
-   obj.style.width = "100px";
-   obj.style.height = "100px";
+   obj.style.width = "10vh";
+   obj.style.height = "10vh";
 
    document.body.appendChild(obj);
    return obj;
@@ -224,7 +226,7 @@ function createObject(ox, oy) {
    obj.className = "rocket";
    obj.style.left = ox + "vw";
    obj.style.top = oy + "vh";
-   obj.style.width = "100px";
+   obj.style.width = "10vh";
    
 
    document.body.appendChild(obj);
@@ -303,8 +305,8 @@ function createBoss(ox, oy) {
  
  obj.style.left = ox + "vw";
  obj.style.top = oy + "vh";
- obj.style.width = "180px"; // Make them bigger than normal asteroids
- obj.style.height = "180px";
+ obj.style.width = "10vh"; // Make them bigger than normal asteroids
+ obj.style.height = "10vh";
 
  document.body.appendChild(obj);
  return obj;
