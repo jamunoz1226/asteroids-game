@@ -8,7 +8,7 @@ let rocketSpeed = 0.8;
 // Score tracker - updates score when an enemy is removed
 let score = 0;
 let enemySpawnRate = 1500;
-let bossSpawnRate = 2000; 
+let bossSpawnRate = 4500; 
 // Track game state
 let isGameOver = false;
 
