@@ -7,8 +7,8 @@ let rocketSpeed = 0.8;
 
 // Score tracker - updates score when an enemy is removed
 let score = 0;
-let enemySpawnRate = 3000;
-let bossSpawnRate = 4000; 
+let enemySpawnRate = 1500;
+let bossSpawnRate = 2000; 
 // Track game state
 let isGameOver = false;
 
@@ -395,7 +395,7 @@ function startGame() {
           console.log("Boss asteroids incoming!");
           randBoss();
       }
-  }, 15000);
+  }, bossSpawnRate);
 
   // INCOMING FRIENDLY BACKUP! (Starts after 20 seconds)
   setTimeout(() => {
@@ -409,8 +409,9 @@ function startGame() {
 setTimeout(() => {
   if (!isGameOver) {
       console.log("WARNING: ASTEROID STORM DETECTED!");
-      // Drop the spawn delay from 1500ms down to 600ms! (More than twice as fast)
-      enemySpawnRate = 600; 
+      // Drop the spawn delay from 1500ms down to 200ms! (More than twice as fast)
+      enemySpawnRate = 200; 
+      bossSpawnRate = 200;
   }
 }, 45000);
 

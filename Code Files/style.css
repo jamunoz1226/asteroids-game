@@ -98,3 +98,23 @@ body {
   box-shadow: 0 0 30px rgba(102, 252, 241, 0.8) !important; /* Brighter glow */
   background-color: rgba(102, 252, 241, 0.2) !important; /* Flashes the background */
 }
+
+/* Positions the link in the top right corner */
+.top-right-link {
+  position: absolute;
+  top: 20px;   /* Distance from the top of the screen */
+  right: 20px; /* Distance from the right side of the screen */
+  z-index: 1000; /* Ensures it sits on top of asteroids and stars */
+}
+
+/* Optional: Adjusts the size and behavior of the image itself */
+.back-btn {
+  width: 150px; /* Change this number if the image is too big or small */
+  cursor: pointer; /* Makes sure the mouse turns into a clicking hand */
+  transition: transform 0.2s; /* Adds a smooth animation speed */
+}
+
+/* Optional: Makes the button "pop" slightly when you hover over it */
+.back-btn:hover {
+  transform: scale(1.1); 
+}
