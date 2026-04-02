@@ -1,6 +1,7 @@
   <!DOCTYPE html>
 <html>
 <head>
+
  <title>Smooth Move</title>
   <link rel="stylesheet" href="style.css">
 
@@ -39,7 +40,35 @@
 
  <!-- Score display -->
  <div id="score">Score: 0</div>
-  
+ <button id="backBtn">← BACK</button>
+
+<script>
+const backBtn = document.getElementById("backBtn");
+
+// style it with JS
+Object.assign(backBtn.style, {
+  position: "fixed",
+  top: "20px",
+  right: "20px",
+  zIndex: "2147483647",
+  padding: "12px 18px",
+  fontSize: "16px",
+  fontWeight: "bold",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+  background: "#111",
+  color: "#fff",
+  boxShadow: "0 0 12px rgba(255,255,255,0.3)"
+});
+
+// click action
+backBtn.onclick = function () {
+  window.location.href = "story.html";
+};
+</script>
+
+
  <script src="jsfile.js"></script>
 
  

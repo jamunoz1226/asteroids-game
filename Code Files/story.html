@@ -558,11 +558,30 @@
                 customGameBtn.style.left = pixelX + 'px';
                 customGameBtn.style.top = pixelY + 'px';
                 customGameBtn.style.setProperty('--btn-scale', scaleFactor);
-            }
-        }
-    }, 50); 
-  </script>
+                
+                // Keep the Button Visible in Full Screen
+                var targetContainer =document.fullscreenElement ||
+                document.querySelector('.primary-slide') ||
+                document.querySelector('#preso') ||
+                document.body;
 
+            if (customGameBtn.parentNode !== targetContainer) {
+                targetContainer.appendChild(customGameBtn);
+            }
+                        }
+                    }
+                }, 50); 
+  </script>
+<script>
+window.addEventListener("load", function () {
+  setTimeout(function () {
+    const resumeBtn = document.querySelector('button[data-dv_ref="resume"]');
+    if (resumeBtn) {
+      resumeBtn.click();
+    }
+  }, 10);
+});
+</script>
 </body>
 <script src="html5/lib/scripts/bootstrapper.min.js"></script>
 </html>

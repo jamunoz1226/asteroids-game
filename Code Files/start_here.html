@@ -1,0 +1,21 @@
+<html>
+
+<body>
+  <div id="instruction-popup" class="popup-overlay">
+    <div class="popup-box">
+        <h2>Please set the page to full screen mode</h2>
+    </div>
+</div>
+
+<script>
+window.addEventListener("resize", function () {
+  if (
+    window.innerWidth === screen.width &&
+    window.innerHeight === screen.height
+  ) {
+    window.location.href = "story.html";
+  }
+});
+</script>
+</body>
+</html>
