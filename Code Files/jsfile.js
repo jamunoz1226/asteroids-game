@@ -1,3 +1,16 @@
+
+window.addEventListener("load", function () {
+
+const today = new Date().toDateString();
+const lastPlayed = localStorage.getItem("lastPlayed");
+
+// If it's a new day → reset high score
+if (lastPlayed !== today) {
+  localStorage.setItem("hscore", 0);
+  localStorage.setItem("lastPlayed", today);
+}
+});
+
 // rocket launch position
 let launchX = 90;
 let launchY = 80;
@@ -38,12 +51,14 @@ function triggerGameOver() {
     // Show the game over popup
     document.getElementById("game-over-popup").style.display = "flex";
     
+
     // Display the final score
     document.getElementById("final-score").innerText = "Final Score: " + score;
 
     // Remove all remaining enemies and rockets from the screen
     document.querySelectorAll('.enemy').forEach(e => e.remove());
     document.querySelectorAll('.rocket').forEach(e => e.remove());
+    checkHighScore();
 }
 
 const player = document.getElementById("player");
@@ -80,6 +95,21 @@ if (near<10)return nEnemy;
 
 // Score display element
 let scoreDisplay = document.getElementById("score");
+let hscore = parseInt(localStorage.getItem("hscore")) || 0;
+
+const hscoreDisplay = document.getElementById("hscore");
+
+// show saved value on load
+hscoreDisplay.innerHTML = "High Score: " + hscore;
+
+// call this ONLY when game ends
+function checkHighScore() {
+  if (score > hscore) {
+    hscore = score;
+    localStorage.setItem("hscore", hscore);
+  }
+  hscoreDisplay.innerHTML = "High Score: " + hscore;
+}
 
 
 
@@ -204,7 +234,6 @@ function moveTotarget(plo, plt) {
             plt.remove();
         }
         scoreDisplay.innerHTML = "Score: " + score;
-
         scoreDisplay.classList.add("score-pop");
           setTimeout(() => scoreDisplay.classList.remove("score-pop"), 150);
     }  
@@ -263,19 +292,7 @@ function createObject(ox, oy) {
    });
 
 
-// --- ROCKET---
-  // let gun = document.createElement("img");
-  // gun.src = "Resources/laser_gun.png";
-  // gun.style.position = "absolute";
-  // gun.style.width = "20vw";
-  // gun.style.height= "40vh"
-  
-  // gun.style.left = "40vw"
-  // gun.style.top = "62vh"
 
-  // gun.style.zIndex = "1000";
-  // document.body.appendChild(gun);
-   
 // Rocket code
 document.addEventListener("click", function(e){
 // ---- let rocket = createRocket(100,0);
@@ -399,12 +416,12 @@ function randFriend(){
 
 // New function to start the game
 function startGame() {
+
   // Hide the initial instruction popup
   document.getElementById('instruction-popup').style.display = 'none';
   
   // Start spawning the normal asteroids immediately
   randenemy();
-  
   // WARNING: INCOMING BOSSES! (Starts after 15 seconds)
   setTimeout(() => {
       if (!isGameOver) {
@@ -432,62 +449,3 @@ setTimeout(() => {
 
 };
 
-
-// When the user clicks, create a laser effect from the rocket to the click position
-//    document.addEventListener("click", function(e) {
-//    let laser = document.createElement("div");
-   
-//    // Get the rocket's position
-//    let rocketX = 50;
-//    let rocketY = 75;
-    
-//    // Get the click position
-//    let clickX = e.clientX*100/window.innerWidth; //follows the width of the screen instead of pixles
-//    let clickY = e.clientY*100/window.innerHeight;
-
-//    // Calculate the distance and angle from the rocket to the click position
-//    let dx = (clickX - rocketX);
-//    let dy = (clickY - rocketY)*window.innerHeight/window.innerWidth;
-//    let distance = Math.sqrt(dx * dx + dy * dy);
-
-//    // Calculate the angle in degrees
-//    let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-//    // Set the laser's position, size, and rotation
-//    rocketX = 50 ;
-//    rocketY = 75;
-//    laser.style.position = "absolute";
-//   //  laser.style.backgroundColor = "red";
-//    laser.style.left = rocketX  + "vw";
-//    laser.style.top = rocketY + "vh";
-//    laser.style.width = distance*window.innerWidth/window.innerHeight + "vh";
-//    laser.style.height = "15vh";
-//    laser.style.backgroundImage = "url('Resources/laser.gif')";
-//    laser.style.transformOrigin = "0 50%";
-//    laser.style.backgroundRepeat = "no-repeat";
-//    laser.style.backgroundSize = "100% 100%";
-//    laser.style.transform = "rotate(" + angle + "deg)";
-//    gun.style.transform = "rotate(" + (angle+90) + "deg)";
-
-//    // Add the laser to the document body
-//    document.body.appendChild(laser);
-
-//    // Remove the laser after a short delay
-//    setTimeout(function() {
-//      laser.remove();
-//    }, 1500);
-
-//    // Check if the clicked element is an enemy and remove it
-//    let clickedElement = e.target;
-
-//    // Check if the clicked element has the class "enemy" and remove it if it does
-//    if (clickedElement.classList.contains("enemy")) {
-//    clickedElement.remove();
-//    // Increment the score and log it to the console
-//    score = score + 1;
-//    if (clickedElement.classList.contains("enemy")) {
-//  clickedElement.remove();
-//  score = score + 1;
-//  scoreDisplay.innerHTML = "Score: " + score;
-// };
-//  }
-// });

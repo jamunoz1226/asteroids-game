@@ -562,6 +562,18 @@
         }
     }, 50); 
   </script>
+  <script>
+window.addEventListener("load", function () {
+
+
+  setTimeout(function () {
+    const resumeBtn = document.querySelector('button[data-dv_ref="resume"]');
+    if (resumeBtn) {
+      resumeBtn.click();
+    }
+  }, 10);
+});
+</script>
 
 </body>
 <script src="html5/lib/scripts/bootstrapper.min.js"></script>
