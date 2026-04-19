@@ -153,3 +153,45 @@ body {
 .back-btn:hover {
   transform: scale(1.1); 
 }
+
+@media (max-width: 600px) {
+    /* Fix the core bug: switch from vh to vw so box fits portrait screens */
+    .popup-box {
+        max-width: 88vw;
+        padding: 5vw;
+        border-radius: 4vw;
+    }
+    /* Scale down the title so it fits on one line */
+    .popup-box h2 {
+        font-size: 1.6rem;
+    }
+    /* Scale down body text */
+    .popup-box p {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+    /* Scale down the button so text stays on one line */
+    .play-btn {
+        font-size: 1.1rem;
+        padding: 12px 20px;
+    }
+    /* Shrink back button so it doesn't overlap the title */
+    .back-btn {
+        width: 18vw;
+        top: 2vw;
+        right: 2vw;
+    }
+    /* Scale down score displays */
+    #score {
+        font-size: 14px;
+        padding: 6px 12px;
+        top: 10px;
+        left: 10px;
+    }
+    #hscore {
+        font-size: 14px;
+        padding: 6px 12px;
+        top: 60px;
+        left: 10px;
+    }
+}
