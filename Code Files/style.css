@@ -195,3 +195,53 @@ body {
         left: 10px;
     }
 }
+
+@media (max-height: 500px) and (orientation: landscape) {
+    /* Make overlay scrollable as a safety net */
+    .popup-overlay {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: 10px 0;
+    }
+    /* Compress the box to fit short screens */
+    .popup-box {
+        max-width: 60vw;
+        padding: 2vh 3vw;
+        border-radius: 8px;
+    }
+    /* Shrink title drastically */
+    .popup-box h2 {
+        font-size: 1.2rem;
+        margin-bottom: 6px;
+    }
+    /* Shrink paragraph text and reduce spacing */
+    .popup-box p {
+        font-size: 0.8rem;
+        line-height: 1.3;
+        margin-bottom: 6px;
+    }
+    /* Compact the button */
+    .play-btn {
+        font-size: 0.9rem;
+        padding: 8px 18px;
+    }
+    /* Shrink back button for landscape */
+    .back-btn {
+        width: 12vw;
+        top: 10px;
+        right: 10px;
+    }
+    /* Compact score displays */
+    #score {
+        font-size: 12px;
+        padding: 4px 10px;
+        top: 8px;
+        left: 8px;
+    }
+    #hscore {
+        font-size: 12px;
+        padding: 4px 10px;
+        top: 48px;
+        left: 8px;
+    }
+}
